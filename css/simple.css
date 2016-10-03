@@ -1,3 +1,6 @@
+/*
+  http://paranoida.github.io/simple-ui/
+ */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -153,6 +156,10 @@ strong, b {
 }
 .box .box_body {
   padding: 15px;
+}
+
+.nav .bt {
+  border-bottom-width: 0;
 }
 
 .bt {
@@ -427,6 +434,13 @@ table {
 .addthis {
   padding: 20px 0 0;
   height: 30px;
+}
+
+a {
+  color: #111;
+}
+a:hover {
+  text-decoration: none;
 }
 
 @media screen and (max-width: 640px) {
