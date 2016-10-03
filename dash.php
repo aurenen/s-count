@@ -23,6 +23,8 @@ if (!isset($_SESSION['login'])) {
     exit();
 } 
 
+$sites = getSitesDash();
+
 require_once 'includes/admin_header.inc'; 
 ?>
 
@@ -41,13 +43,15 @@ require_once 'includes/admin_header.inc';
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td><a href="">Shinshoku</a></td>
-                    <td>2</td>
-                    <td>46,000</td>
-                    <td><a href="">Edit</a></td>
-                </tr>
+                <?php foreach ($sites as $s) {
+                    echo '<tr>' .
+                         '<td>' . $s['site_id'] . '</td>' .
+                         '<td><a href="' . $s['site_url'] . '">' . $s['site_name'] . '</a></td>' .
+                         '<td>' . $s['site_id'] . '</td>' .
+                         '<td>' . $s['count'] . '</td>' .
+                         '<td><a href="edit.php?site_id=' . $s['site_id'] . '">Edit</a></td>' .
+                         '</tr>' . "\n";
+                } ?>
             </tbody>
         </table>
 
