@@ -5,7 +5,7 @@
  *  https://github.com/aurenen/s-count
  *  
  *  script: s-count
- *  file: settings.php
+ *  file: add.php
  *  
  *  Dashboard for admin panel.
  * 
