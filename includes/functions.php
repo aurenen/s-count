@@ -94,6 +94,28 @@ function getSettings() {
     return $result;
 }
 
+function addSite($name, $url, $count) {
+    $db = db_connect();
+    $query = "INSERT INTO `" . DB_PREFIX . "sites` (`site_name`, `site_url`, `count`)
+        VALUES (:name, :url, :count);";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':name', $name, PDO::PARAM_STR, 50);
+        $stmt->bindParam(':url', $url, PDO::PARAM_STR, 50);
+        $stmt->bindParam(':count', $count, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        $status = '<div class="success">Successfully added.</div>';
+    }
+    catch (Exception $ex) {
+        $status = '<div class="warning">ERROR: failed to insert settings. ' . 
+                    $ex->getMessage() . '</div>';
+    }
+    return $status;
+    $db = null;
+}
+
 // http://webcheatsheet.com/php/get_current_page_url.php
 function curPageURL() {
     $pageURL = 'http';
