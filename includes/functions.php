@@ -86,7 +86,7 @@ function getSettings() {
         $result = $stmt->fetchAll();
     }
     catch (Exception $ex) {
-        echo date('Y-m-d') . ' ERROR: failed to get entry for edit. ' . $ex->getMessage();
+        echo 'ERROR: failed to get entry for edit. ' . $ex->getMessage();
         $result = null;
     }
     
@@ -114,6 +114,23 @@ function addSite($name, $url, $count) {
     }
     return $status;
     $db = null;
+}
+
+function getSitesDash() {
+    $db = db_connect();
+    $query = "SELECT `site_id`, `site_name`, `site_url`, `count` FROM `" . DB_PREFIX . "sites`";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+    }
+    catch (Exception $ex) {
+        echo 'ERROR: failed to get sites. ' . $ex->getMessage();
+        $result = null;
+    }
+    
+    $db = null;
+    return $result;
 }
 
 // http://webcheatsheet.com/php/get_current_page_url.php
