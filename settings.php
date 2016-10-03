@@ -43,7 +43,7 @@ require_once 'includes/admin_header.inc';
 
         <h2>Settings</h2>
 
-        <form action="sesttings.php" method="post">
+        <form action="settings.php" method="post">
             <div class="form-row">
               <label>Email</label>
               <input name="email" type="text" value="<?php echo $email; ?>" />
