@@ -90,8 +90,13 @@ strong, b {
 
 .warning {
   margin: 10px 0;
-  padding: 5px;
+  padding: 10px;
   background-color: #dda1a1;
+}
+.success {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #b4dba0;
 }
 
 .badge {
