@@ -29,7 +29,7 @@ $create_settings = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "settings` (
     `set_value` VARCHAR(255) NOT NULL,
     `description` VARCHAR(200) NOT NULL
 ) ENGINE=MyISAM;";
-$create_sites = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "sites` (
+$create_sites = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "projects` (
     `site_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `site_name` VARCHAR(50) NOT NULL,
     `site_url` VARCHAR(50) NOT NULL,
