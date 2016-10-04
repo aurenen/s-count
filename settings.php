@@ -66,20 +66,21 @@ require_once 'includes/admin_header.inc';
 
         <h2>Usage</h2>
         
-        <p>To use on your site, either use PHP include or Javascript include. Change the <code>site_id</code> value to the site you're tracking.</p>
+        <p>To use on your site, either use PHP include or Javascript include. Change the <code>id</code> value to the site you're tracking.</p>
 
         <textarea>&lt;?php 
     $site_id = 1;
+    $visible = true;
     include '<?php echo $full_path; ?>count.php';
 ?&gt;
 
 OR
 
-&lt;script src="<?php echo $full_url; ?>count.php?site_id=1"&gt;&lt;/script&gt;</textarea>
+&lt;script src="<?php echo $full_url; ?>count.php?id=1&amp;v=1"&gt;&lt;/script&gt;</textarea>
 
         <p>To track detailed visitor info, put this where you'd like to track.</p>
 
-        <textarea>&lt;img src="<?php echo $full_url; ?>track.php?site_id=1"&gt;</textarea>
+        <textarea>&lt;img src="<?php echo $full_url; ?>track.php?id=1&amp;c=1"&gt;</textarea>
 
 <?php 
 require_once 'includes/admin_footer.inc'; 
