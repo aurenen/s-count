@@ -96,7 +96,7 @@ function getSettings() {
 
 function addSite($name, $url, $count) {
     $db = db_connect();
-    $query = "INSERT INTO `" . DB_PREFIX . "sites` (`site_name`, `site_url`, `count`)
+    $query = "INSERT INTO `" . DB_PREFIX . "projects` (`site_name`, `site_url`, `count`)
         VALUES (:name, :url, :count);";
     $stmt = $db->prepare($query);
     try {
@@ -118,7 +118,7 @@ function addSite($name, $url, $count) {
 
 function getSitesDash() {
     $db = db_connect();
-    $query = "SELECT `site_id`, `site_name`, `site_url`, `count` FROM `" . DB_PREFIX . "sites`";
+    $query = "SELECT `site_id`, `site_name`, `site_url`, `count` FROM `" . DB_PREFIX . "projects`";
     $stmt = $db->prepare($query);
     try {
         $stmt->execute();
