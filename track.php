@@ -15,8 +15,13 @@ require_once 'includes/connect.php';
 require_once 'includes/functions.php';
 
 $site_id = is_numeric($_GET['id']) ? intval($_GET['id']) : 0;
-$add_count = ($_GET['c'] == 1) ? true : false;
-// connects to db
+
+if ($site_id == 0)
+    exit();
+
+// hit count++
+addCount($site_id);
+
 // grab visitor info and inserts a new row with it, associated with the site id
 
 // print image
