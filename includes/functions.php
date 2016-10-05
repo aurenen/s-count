@@ -77,6 +77,34 @@ function verifyUser($user, $pass) {
     return $verify;
 }
 
+function getCount($id) {
+    if (!isset($db))
+        $db = db_connect();
+
+    // select hit count for this site
+    $stmt = $db->prepare("SELECT `count` FROM `" . DB_PREFIX . "projects` WHERE `site_id` = :id;");
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $result['count'];
+}
+
+function addCount($id) {
+    $db = db_connect();
+
+    $count = intval(getCount($id)) + 1;
+
+    // update hit count with $count
+    $stmt = $db->prepare("UPDATE `" . DB_PREFIX . "projects` SET `count` = :count WHERE `site_id` = :id;");
+    $stmt->bindParam(':count', $count, PDO::PARAM_INT);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $db = null;
+    return $count;
+}
+
 function getSettings() {
     $db = db_connect();
     $query = "SELECT `set_key`, `set_value` FROM `" . DB_PREFIX . "settings`";
