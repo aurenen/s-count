@@ -39,7 +39,7 @@ $create_hits = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "hits` (
     `hit_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `site_id` INT(10) UNSIGNED NOT NULL,
     `referrer` VARCHAR(200) NOT NULL,
-    `page` VARCHAR(50) NOT NULL,
+    `page` VARCHAR(200) NOT NULL,
     `ip_address` VARCHAR(20) NOT NULL,
     `browser` VARCHAR(30) NOT NULL,
     `time` TIMESTAMP NOT NULL
