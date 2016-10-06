@@ -47,7 +47,7 @@ require_once 'includes/admin_header.inc';
                     echo '<tr>' .
                          '<td>' . $s['site_id'] . '</td>' .
                          '<td><a href="' . $s['site_url'] . '">' . $s['site_name'] . '</a></td>' .
-                         '<td>' . $s['site_id'] . '</td>' .
+                         '<td>' . $s['today'] . '</td>' .
                          '<td>' . $s['count'] . '</td>' .
                          '<td><a href="edit.php?site_id=' . $s['site_id'] . '">Edit</a></td>' .
                          '</tr>' . "\n";

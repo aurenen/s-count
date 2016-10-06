@@ -281,7 +281,9 @@ function addSite($name, $url, $count) {
 
 function getSitesDash() {
     $db = db_connect();
-    $query = "SELECT `site_id`, `site_name`, `site_url`, `count` FROM `" . DB_PREFIX . "projects`";
+    $query = "SELECT p.`site_id`, p.`site_name`, p.`site_url`, COUNT(h.`hit_id`) AS `today`, p.`count` 
+        FROM `" . DB_PREFIX . "projects` AS p JOIN `" . DB_PREFIX . "hits` AS h ON h.`site_id` = p.`site_id`
+        WHERE DATE(h.`time`) = CURDATE();";
     $stmt = $db->prepare($query);
     try {
         $stmt->execute();
