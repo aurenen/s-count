@@ -46,7 +46,7 @@ require_once 'includes/admin_header.inc';
                 <?php foreach ($sites as $s) {
                     echo '<tr>' .
                          '<td>' . $s['site_id'] . '</td>' .
-                         '<td><a href="' . $s['site_url'] . '">' . $s['site_name'] . '</a></td>' .
+                         '<td><a href="hits.php?id=' . $s['site_id'] . '">' . $s['site_name'] . '</a></td>' .
                          '<td>' . $s['today'] . '</td>' .
                          '<td>' . $s['count'] . '</td>' .
                          '<td><a href="edit.php?site_id=' . $s['site_id'] . '">Edit</a></td>' .
