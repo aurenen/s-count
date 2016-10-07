@@ -66,21 +66,25 @@ require_once 'includes/admin_header.inc';
 
         <h2>Usage</h2>
         
-        <p>To use on your site, either use PHP include or Javascript include. Change the <code>id</code> value to the site you're tracking.</p>
+        <p>To display the hit number count on your site, either use PHP include or Javascript include to display it. Change the <code>$site_id = 1</code> 
+            in the PHP version and the <code>id=1</code> in the javascript version value to the site you're tracking.</p>
 
         <textarea>&lt;?php 
     $site_id = 1;
-    $visible = true;
     include '<?php echo $full_path; ?>count.php';
 ?&gt;
 
 OR
 
-&lt;script src="<?php echo $full_url; ?>count.php?id=1&amp;v=1"&gt;&lt;/script&gt;</textarea>
+&lt;script src="<?php echo $full_url; ?>count.php?id=1"&gt;&lt;/script&gt;</textarea>
 
-        <p>To track detailed visitor info, put this where you'd like to track.</p>
+        <p>To track detailed visitor info and count hits, put this where you'd like to track. Change <code>id=1</code> to the matching project id.</p>
 
-        <textarea>&lt;img src="<?php echo $full_url; ?>track.php?id=1&amp;c=1"&gt;</textarea>
+        <textarea>&lt;script&gt;
+        document.write('&lt;img src="<?php echo $full_url; ?>track.php?id=1&amp;page='+window.location.href+'&amp;ref='+document.referrer+'" alt=""&gt;');
+&lt;/script&gt;</textarea>
+
+        <p>Note: If you do not include the above tracker code, then your page counter will never update.</p>
 
 <?php 
 require_once 'includes/admin_footer.inc'; 
