@@ -59,8 +59,8 @@ require_once 'includes/admin_header.inc';
                     echo '<tr>' .
                          '<td>' . date('M j, Y', strtotime($h['time'])) . 
                          '<br>' . date('h:i a', strtotime($h['time'])) . '</td>' .
-                         '<td>' . $h['ip_address'] . '<br>' .
-                         $h['browser'] . '</td>' .
+                         '<td>' . $h['ip_address'] . 
+                         '<br>' . $h['browser'] . '</td>' .
                          '<td><a href="' . $h['referrer'] . '">' . $h['referrer'] . '</a><br>' .
                          '<a href="' . $h['page'] . '">' . $h['page'] . '</a></td>' .
                          '</tr>' . "\n";
