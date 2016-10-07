@@ -171,6 +171,10 @@ strong, b {
   margin-top: 10px;
 }
 
+.pagination .bt {
+  margin-bottom: 5px;
+}
+
 .bt {
   height: 35px;
   position: relative;
