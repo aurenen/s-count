@@ -281,7 +281,7 @@ function addSite($name, $url, $count) {
 
 function getSitesDash() {
     $db = db_connect();
-    $query = "SELECT p.`site_id`, p.`site_name`, p.`site_url`, COUNT(h.`hit_id`) AS `today`, p.`count` 
+    $query = "SELECT p.`site_id`, p.`site_name`, COUNT(h.`hit_id`) AS `today`, p.`count` 
         FROM `" . DB_PREFIX . "projects` AS p JOIN `" . DB_PREFIX . "hits` AS h ON h.`site_id` = p.`site_id`
         WHERE DATE(h.`time`) = CURDATE();";
     $stmt = $db->prepare($query);
@@ -291,6 +291,45 @@ function getSitesDash() {
     }
     catch (Exception $ex) {
         echo 'ERROR: failed to get sites. ' . $ex->getMessage();
+        $result = null;
+    }
+    
+    $db = null;
+    return $result;
+}
+
+function getSiteInfo($id) {
+    $db = db_connect();
+
+    $stmt = $db->prepare("SELECT `site_name`, `site_url`, `count` FROM `" . DB_PREFIX . "projects` WHERE `site_id` = :id;");
+    try {
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+    catch (Exception $ex) {
+        echo 'ERROR: failed to get site info. ' . $ex->getMessage();
+    }
+}
+
+function getHits($id, $off, $lim) {
+    $db = db_connect();
+    $query = "SELECT `referrer`, `page`, `ip_address`, `browser`, `time`
+        FROM `" . DB_PREFIX . "hits` 
+        WHERE `site_id` = :id ORDER BY `time` DESC 
+        LIMIT :offset, :limit;";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $off, PDO::PARAM_INT);
+        $stmt->bindParam(':limit', $lim, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+    }
+    catch (Exception $ex) {
+        echo 'ERROR: failed to get hits. ' . $ex->getMessage();
         $result = null;
     }
     
