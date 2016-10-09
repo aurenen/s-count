@@ -42,6 +42,7 @@ $create_hits = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "hits` (
     `page` VARCHAR(200) NOT NULL,
     `ip_address` VARCHAR(20) NOT NULL,
     `browser` VARCHAR(30) NOT NULL,
+    `resolution` VARCHAR(10) NOT NULL,
     `time` TIMESTAMP NOT NULL
 ) ENGINE=MyISAM;";
 
