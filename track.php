@@ -19,9 +19,6 @@ $site_id = is_numeric($_GET['id']) ? intval($_GET['id']) : 0;
 if ($site_id == 0)
     exit();
 
-// hit count++
-addCount($site_id);
-
 // grab visitor info and inserts a new row with it, associated with the site id
 if (strlen($_GET['ref']) < 1)
     $link_ref = "None";
@@ -33,7 +30,10 @@ if (strlen($_GET['page']) < 1)
 else
     $link_hit = $_GET['page'];
 $user_ip = getUserIp();
+$user_res = (preg_match('/[0-9]{3,4}x[0-9]{3,4}/i', $_GET['res']) && strlen($_GET['res']) < 10) ? $_GET['res'] : "Unknown";
 $browser = getBrowser();
+
+date_default_timezone_set('America/Los_Angeles');
 $hit_time = date('Y-m-d H:i:s');
 /*
     [name] => Google Chrome
@@ -41,7 +41,10 @@ $hit_time = date('Y-m-d H:i:s');
     [platform] => mac
  */
 $browser_format = sprintf('%s %.1f (%s)', $browser['name'], $browser['version'], $browser['platform']);
-addHitInfo($site_id, $link_ref, $link_hit, $user_ip, $browser_format, $hit_time);
+addHitInfo($site_id, $link_ref, $link_hit, $user_ip, $user_res, $browser_format, $hit_time);
+
+// hit count++
+addCount($site_id);
 
 // print image
 $image = @imagecreate(1, 1) or die ("Error creating image.");

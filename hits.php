@@ -46,7 +46,7 @@ require_once 'includes/admin_header.inc';
         <p>Hits for <a href="<?php echo $site['site_url']; ?>"><?php echo $site['site_name']; ?></a>, total of 
             <?php echo $site['count']; ?> hits.</p>
 
-        <table class="table">
+        <table class="table" id="hits">
             <thead>
                 <tr>
                     <th>Date / Time</th>
@@ -59,10 +59,11 @@ require_once 'includes/admin_header.inc';
                     echo '<tr>' .
                          '<td>' . date('M j, Y', strtotime($h['time'])) . 
                          '<br>' . date('h:i a', strtotime($h['time'])) . '</td>' .
-                         '<td>' . $h['ip_address'] . 
+                         '<td><span>' . $h['ip_address'] . 
+                         '</span><br>' . $h['resolution'] . 
                          '<br>' . $h['browser'] . '</td>' .
-                         '<td><a href="' . $h['referrer'] . '">' . $h['referrer'] . '</a><br>' .
-                         '<a href="' . $h['page'] . '">' . $h['page'] . '</a></td>' .
+                         '<td><p><a href="' . $h['referrer'] . '">' . $h['referrer'] . '</a></p>' .
+                         '<p><a href="' . $h['page'] . '">' . $h['page'] . '</a></p></td>' .
                          '</tr>' . "\n";
                 } ?>
             </tbody>
@@ -83,7 +84,6 @@ require_once 'includes/admin_header.inc';
                 echo '<a href="hits.php?id='. $site_id .'&p='. ($page_num + 1) .'" class="bt">Next</a> ';
             ?>
         </div>
-
 <?php 
 require_once 'includes/admin_footer.inc'; 
 ?>

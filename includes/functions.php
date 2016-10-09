@@ -218,17 +218,18 @@ function getUserIp()
     return $ip;
 }
 
-function addHitInfo($id, $referrer, $page_hit, $ip_address, $browser_info, $time) {
+function addHitInfo($id, $referrer, $page_hit, $ip_address, $resolution, $browser_info, $time) {
     $db = db_connect();
 
-    $query = "INSERT INTO `" . DB_PREFIX . "hits` (`site_id`, `referrer`, `page`, `ip_address`, `browser`, `time`)
-        VALUES (:site_id, :referrer, :page, :ip_address, :browser, :time);";
+    $query = "INSERT INTO `" . DB_PREFIX . "hits` (`site_id`, `referrer`, `page`, `ip_address`, `resolution`, `browser`, `time`)
+        VALUES (:site_id, :referrer, :page, :ip_address, :resolution, :browser, :time);";
     $stmt = $db->prepare($query);
     try {
         $stmt->bindParam(':site_id', $id, PDO::PARAM_INT);
         $stmt->bindParam(':referrer', $referrer, PDO::PARAM_STR, 200);
         $stmt->bindParam(':page', $page_hit, PDO::PARAM_STR, 50);
         $stmt->bindParam(':ip_address', $ip_address, PDO::PARAM_STR, 20);
+        $stmt->bindParam(':resolution', $resolution, PDO::PARAM_STR, 10);
         $stmt->bindParam(':browser', $browser_info, PDO::PARAM_STR, 30);
         $stmt->bindParam(':time', $time, PDO::PARAM_STR);
         $stmt->execute();
@@ -316,7 +317,7 @@ function getSiteInfo($id) {
 
 function getHits($id, $off, $lim) {
     $db = db_connect();
-    $query = "SELECT `referrer`, `page`, `ip_address`, `browser`, `time`
+    $query = "SELECT `referrer`, `page`, `ip_address`, `resolution`, `browser`, `time`
         FROM `" . DB_PREFIX . "hits` 
         WHERE `site_id` = :id ORDER BY `time` DESC 
         LIMIT :offset, :limit;";

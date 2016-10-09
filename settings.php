@@ -81,7 +81,7 @@ OR
         <p>To track detailed visitor info and count hits, put this where you'd like to track. Change <code>id=1</code> to the matching project id.</p>
 
         <textarea>&lt;script&gt;
-        document.write('&lt;img src="<?php echo $full_url; ?>track.php?id=1&amp;page='+window.location.href+'&amp;ref='+document.referrer+'" alt=""&gt;');
+        document.write('&lt;img src="<?php echo $full_url; ?>track.php?id=1&amp;res='+screen.width+'x'+screen.height+'&amp;page='+window.location.href+'&amp;ref='+document.referrer+'" alt=""&gt;');
 &lt;/script&gt;</textarea>
 
         <p>Note: If you do not include the above tracker code, then your page counter will never update.</p>
