@@ -41,10 +41,17 @@ $page_num = $offset + 1;
 require_once 'includes/admin_header.inc'; 
 ?>
 
-        <h2>Dashboard</h2>
+        <h2><?php echo $page_title; ?></h2>
 
-        <p>Hits for <a href="<?php echo $site['site_url']; ?>"><?php echo $site['site_name']; ?></a>, total of 
-            <?php echo $site['count']; ?> hits.</p>
+        <p>
+            Site <a href="<?php echo $site['site_url']; ?>"><?php echo $site['site_name']; ?></a>
+            //
+            Total: <?php echo $site['count']; ?> hits
+            //
+            Top referrers
+            //
+            Browser stats
+        </p>
 
         <table class="table" id="hits">
             <thead>
@@ -59,8 +66,8 @@ require_once 'includes/admin_header.inc';
                     echo '<tr>' .
                          '<td>' . date('M j, Y', strtotime($h['time'])) . 
                          '<br>' . date('h:i a', strtotime($h['time'])) . '</td>' .
-                         '<td><span>' . $h['ip_address'] . 
-                         '</span><br>' . $h['resolution'] . 
+                         '<td><a href="http://www.ip-tracker.org/locator/ip-lookup.php?ip=' . $h['ip_address'] . '" target="iplookup">' . $h['ip_address'] . '</a>' .
+                         '<br>' . $h['resolution'] . 
                          '<br>' . $h['browser'] . '</td>' .
                          '<td><p><a href="' . $h['referrer'] . '">' . $h['referrer'] . '</a></p>' .
                          '<p><a href="' . $h['page'] . '">' . $h['page'] . '</a></p></td>' .
