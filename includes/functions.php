@@ -11,6 +11,11 @@
  *  
  ************************************************************************/
 
+
+/* ======================================================================
+ *  USEFUL UTILITIES
+ * ====================================================================== */
+
 /**
  * Check if page is current url for navigation
  * http://blog.aurenen.org/2015/11/php-dynamic-navigationpage-title/
@@ -40,79 +45,17 @@ function is_current($title) {
     }
 }
 
-/**
- * Checks parameters with database values to verify if login matches
- * @param  string $user
- * @param  string $pass 
- * @return booloan 
- */
-function verifyUser($user, $pass) {
-    $db = db_connect();
-    $verify = false;
-
-    $sql = "SELECT u.`set_value` AS user, p.`set_value` AS pass FROM  
-        (SELECT `set_value` FROM `" . DB_PREFIX . "settings` WHERE `set_key` = 'username') u,
-        (SELECT `set_value` FROM `" . DB_PREFIX . "settings` WHERE `set_key` = 'password') p";
-
-    $stmt = $db->prepare($sql);
-
-    try {
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // hash password before checking with db
-        $hasher = new PasswordHash(8, FALSE);
-        // if match, result[user] == 'username' and result[pass] == 'password'
-        if (strcmp($user, $result['user']) === 0 && $hasher->CheckPassword($pass, $result['pass'])) {
-            $verify = true;
-        }
-        unset($hasher);
+// http://webcheatsheet.com/php/get_current_page_url.php
+function curPageURL() {
+    $pageURL = 'http';
+    if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+        $pageURL .= "://";
+    if ($_SERVER["SERVER_PORT"] != "80") {
+        $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+    } else {
+        $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
     }
-    catch (Exception $ex) {
-        echo $ex->getMessage();
-        $verify = false;
-    }
-
-    $db = null;
-    return $verify;
-}
-
-function getCount($id) {
-    if (!isset($db))
-        $db = db_connect();
-
-    // select hit count for this site
-    $stmt = $db->prepare("SELECT `count` FROM `" . DB_PREFIX . "projects` WHERE `site_id` = :id;");
-    try {
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $result['count'];
-    }
-    catch (Exception $ex) {
-        echo $ex->getMessage();
-    }
-}
-
-function addCount($id) {
-    $db = db_connect();
-
-    $count = intval(getCount($id)) + 1;
-
-    // update hit count with $count
-    $stmt = $db->prepare("UPDATE `" . DB_PREFIX . "projects` SET `count` = :count WHERE `site_id` = :id;");
-    try {
-        $stmt->bindParam(':count', $count, PDO::PARAM_INT);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $db = null;
-        return $count;
-    }
-    catch (Exception $ex) {
-        echo $ex->getMessage();
-    }
+    return $pageURL;
 }
 
 // http://php.net/manual/en/function.get-browser.php#101125
@@ -218,6 +161,198 @@ function getUserIp()
     return $ip;
 }
 
+/* ======================================================================
+ *  CORE FUNCTIONS
+ * ====================================================================== */
+
+/**
+ * Checks parameters with database values to verify if login matches
+ * @param  string $user
+ * @param  string $pass 
+ * @return booloan 
+ */
+function verifyUser($user, $pass) {
+    $db = db_connect();
+    $verify = false;
+
+    $sql = "SELECT u.`set_value` AS user, p.`set_value` AS pass FROM  
+        (SELECT `set_value` FROM `" . DB_PREFIX . "settings` WHERE `set_key` = 'username') u,
+        (SELECT `set_value` FROM `" . DB_PREFIX . "settings` WHERE `set_key` = 'password') p";
+
+    $stmt = $db->prepare($sql);
+
+    try {
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // hash password before checking with db
+        $hasher = new PasswordHash(8, FALSE);
+        // if match, result[user] == 'username' and result[pass] == 'password'
+        if (strcmp($user, $result['user']) === 0 && $hasher->CheckPassword($pass, $result['pass'])) {
+            $verify = true;
+        }
+        unset($hasher);
+    }
+    catch (Exception $ex) {
+        echo $ex->getMessage();
+        $verify = false;
+    }
+
+    $db = null;
+    return $verify;
+}
+
+/**
+ * Returns the `count` column for matching site
+ * @param  int $id : site_id
+ * @return int 
+ */
+function getCount($id) {
+    if (!isset($db))
+        $db = db_connect();
+
+    // select hit count for this site
+    $stmt = $db->prepare("SELECT `count` FROM `" . DB_PREFIX . "projects` WHERE `site_id` = :id;");
+    try {
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result['count'];
+    }
+    catch (Exception $ex) {
+        echo $ex->getMessage();
+    }
+}
+
+/**
+ * Calls getCount() for the matching site and +1 to it, return new value
+ * @param  int $id : site_id
+ * @return int 
+ */
+function addCount($id) {
+    $db = db_connect();
+
+    $count = intval(getCount($id)) + 1;
+
+    // update hit count with $count
+    $stmt = $db->prepare("UPDATE `" . DB_PREFIX . "projects` SET `count` = :count WHERE `site_id` = :id;");
+    try {
+        $stmt->bindParam(':count', $count, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $db = null;
+        return $count;
+    }
+    catch (Exception $ex) {
+        echo $ex->getMessage();
+    }
+}
+
+/**
+ * Selects all the settings from the Settings table
+ * @return array : associative array of all the values
+ */
+function getSettings() {
+    $db = db_connect();
+    $query = "SELECT `set_key`, `set_value` FROM `" . DB_PREFIX . "settings`";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+    }
+    catch (Exception $ex) {
+        echo 'ERROR: failed to get entry for edit. ' . $ex->getMessage();
+        $result = null;
+    }
+    
+    $db = null;
+    return $result;
+}
+
+/**
+ * Adds a new site/project
+ * @param string $name 
+ * @param string $url   
+ * @param int    $count 
+ */
+function addSite($name, $url, $count) {
+    $db = db_connect();
+    $query = "INSERT INTO `" . DB_PREFIX . "projects` (`site_name`, `site_url`, `count`)
+        VALUES (:name, :url, :count);";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':name', $name, PDO::PARAM_STR, 50);
+        $stmt->bindParam(':url', $url, PDO::PARAM_STR, 50);
+        $stmt->bindParam(':count', $count, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        $status = '<div class="success">Successfully added.</div>';
+    }
+    catch (Exception $ex) {
+        $status = '<div class="warning">ERROR: failed to insert settings. ' . 
+                    $ex->getMessage() . '</div>';
+    }
+    return $status;
+    $db = null;
+}
+
+/**
+ * Selects all the site info/stats to be displays on the dashboard
+ * @return array : associative array result set
+ */
+function getSitesDash() {
+    $db = db_connect();
+    $query = "SELECT p.`site_id`, p.`site_name`, COUNT(h.`hit_id`) AS `today`, p.`count` 
+        FROM `" . DB_PREFIX . "projects` AS p JOIN `" . DB_PREFIX . "hits` AS h ON h.`site_id` = p.`site_id`
+        WHERE DATE(h.`time`) = CURDATE();";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+    }
+    catch (Exception $ex) {
+        echo 'ERROR: failed to get sites. ' . $ex->getMessage();
+        $result = null;
+    }
+    
+    $db = null;
+    return $result;
+}
+
+/**
+ * Selects site info from Projects table.
+ * @param  int   $id : the site_id
+ * @return array     : associative array of the result set
+ */
+function getSiteInfo($id) {
+    $db = db_connect();
+
+    $stmt = $db->prepare("SELECT `site_name`, `site_url`, `count` FROM `" . DB_PREFIX . "projects` WHERE `site_id` = :id;");
+    try {
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+    catch (Exception $ex) {
+        echo 'ERROR: failed to get site info. ' . $ex->getMessage();
+    }
+}
+
+/**
+ * Adds visitor hit with related info
+ * @param int    $id           : site_id of project
+ * @param string $referrer     : url
+ * @param string $page_hit     : url
+ * @param string $ip_address   : ipv4 address
+ * @param string $resolution   : [0-9]{3,4}x[0-9]{3,4}
+ * @param string $browser_info : name version (os)
+ * @param string $time         : timestamp
+ */
 function addHitInfo($id, $referrer, $page_hit, $ip_address, $resolution, $browser_info, $time) {
     $db = db_connect();
 
@@ -241,80 +376,13 @@ function addHitInfo($id, $referrer, $page_hit, $ip_address, $resolution, $browse
     $db = null;
 }
 
-function getSettings() {
-    $db = db_connect();
-    $query = "SELECT `set_key`, `set_value` FROM `" . DB_PREFIX . "settings`";
-    $stmt = $db->prepare($query);
-    try {
-        $stmt->execute();
-        $result = $stmt->fetchAll();
-    }
-    catch (Exception $ex) {
-        echo 'ERROR: failed to get entry for edit. ' . $ex->getMessage();
-        $result = null;
-    }
-    
-    $db = null;
-    return $result;
-}
-
-function addSite($name, $url, $count) {
-    $db = db_connect();
-    $query = "INSERT INTO `" . DB_PREFIX . "projects` (`site_name`, `site_url`, `count`)
-        VALUES (:name, :url, :count);";
-    $stmt = $db->prepare($query);
-    try {
-        $stmt->bindParam(':name', $name, PDO::PARAM_STR, 50);
-        $stmt->bindParam(':url', $url, PDO::PARAM_STR, 50);
-        $stmt->bindParam(':count', $count, PDO::PARAM_INT);
-
-        $stmt->execute();
-
-        $status = '<div class="success">Successfully added.</div>';
-    }
-    catch (Exception $ex) {
-        $status = '<div class="warning">ERROR: failed to insert settings. ' . 
-                    $ex->getMessage() . '</div>';
-    }
-    return $status;
-    $db = null;
-}
-
-function getSitesDash() {
-    $db = db_connect();
-    $query = "SELECT p.`site_id`, p.`site_name`, COUNT(h.`hit_id`) AS `today`, p.`count` 
-        FROM `" . DB_PREFIX . "projects` AS p JOIN `" . DB_PREFIX . "hits` AS h ON h.`site_id` = p.`site_id`
-        WHERE DATE(h.`time`) = CURDATE();";
-    $stmt = $db->prepare($query);
-    try {
-        $stmt->execute();
-        $result = $stmt->fetchAll();
-    }
-    catch (Exception $ex) {
-        echo 'ERROR: failed to get sites. ' . $ex->getMessage();
-        $result = null;
-    }
-    
-    $db = null;
-    return $result;
-}
-
-function getSiteInfo($id) {
-    $db = db_connect();
-
-    $stmt = $db->prepare("SELECT `site_name`, `site_url`, `count` FROM `" . DB_PREFIX . "projects` WHERE `site_id` = :id;");
-    try {
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $result;
-    }
-    catch (Exception $ex) {
-        echo 'ERROR: failed to get site info. ' . $ex->getMessage();
-    }
-}
-
+/**
+ * Selects a paginated result set of hits of site_id
+ * @param  int    $id  : site_id
+ * @param  int    $off : offset, -1 of page #
+ * @param  int    $lim : limit, results per page
+ * @return string      : associative array of result set
+ */
 function getHits($id, $off, $lim) {
     $db = db_connect();
     $query = "SELECT `referrer`, `page`, `ip_address`, `resolution`, `browser`, `time`
@@ -336,17 +404,4 @@ function getHits($id, $off, $lim) {
     
     $db = null;
     return $result;
-}
-
-// http://webcheatsheet.com/php/get_current_page_url.php
-function curPageURL() {
-    $pageURL = 'http';
-    if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
-        $pageURL .= "://";
-    if ($_SERVER["SERVER_PORT"] != "80") {
-        $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-    } else {
-        $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-    }
-    return $pageURL;
 }
