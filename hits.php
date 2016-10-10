@@ -44,13 +44,13 @@ require_once 'includes/admin_header.inc';
         <h2><?php echo $page_title; ?></h2>
 
         <p>
-            Site <a href="<?php echo $site['site_url']; ?>"><?php echo $site['site_name']; ?></a>
+            Site: <a href="<?php echo $site['site_url']; ?>"><?php echo $site['site_name']; ?></a>
             //
-            Total: <?php echo $site['count']; ?> hits
+            Total: <a href="hits.php?id=<?php echo $site_id; ?>"><?php echo $site['count']; ?> hits</a>
             //
-            Top referrers
+            <a href="stats.php?type=referrer&id=<?php echo $site_id; ?>">Top referrers</a>
             //
-            Browser stats
+            <a href="stats.php?type=browser&id=<?php echo $site_id; ?>">Browser stats</a>
         </p>
 
         <table class="table" id="hits">
