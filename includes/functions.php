@@ -417,7 +417,7 @@ function getHits($id, $off, $lim) {
  */
 function getBrowserStats($id) {
     $db = db_connect();
-    $query = "SELECT `browser`, count(`cnt_hits`.`browser`) AS type FROM `" . DB_PREFIX . "hits`
+    $query = "SELECT `browser`, count(`browser`) AS `cnt` FROM `" . DB_PREFIX . "hits`
         WHERE `site_id` = :id
         GROUP BY `browser`;";
     $stmt = $db->prepare($query);
@@ -428,6 +428,32 @@ function getBrowserStats($id) {
     }
     catch (Exception $ex) {
         echo 'ERROR: failed to get browser stats. ' . $ex->getMessage();
+        $result = null;
+    }
+    
+    $db = null;
+    return $result;
+}
+
+/**
+ * Select the referrer and counts its total hits for a project
+ * @param  int   $id site_id
+ * @return array     associative array of the result set
+ */
+function getReferrerStats($id) {
+    $db = db_connect();
+    $query = "SELECT `referrer`, count(`referrer`) AS `cnt` FROM `" . DB_PREFIX . "hits`
+        WHERE `site_id` = :id
+        GROUP BY `referrer`
+        ORDER BY `cnt` DESC LIMIT 10;";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+    }
+    catch (Exception $ex) {
+        echo 'ERROR: failed to get referrer stats. ' . $ex->getMessage();
         $result = null;
     }
     
