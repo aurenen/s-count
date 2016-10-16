@@ -5,9 +5,9 @@
  *  https://github.com/aurenen/s-count
  *  
  *  script: s-count
- *  file: hits.php
+ *  file: stats.php
  *  
- *  Displays, by project id, visit hits and info.
+ *  Displays, by project id, browser and referrer stats.
  * 
  ************************************************************/
 
