@@ -24,13 +24,15 @@ if (!isset($_SESSION['login'])) {
 } 
 
 $sites = getSitesDash();
+$proj_cnt = getProjectCount();
+$hit_cnt = getHitCount();
 
 require_once 'includes/admin_header.inc'; 
 ?>
 
         <h2>Dashboard</h2>
         
-        <p>There are <code>5</code> sites being tracked, with a total of <code>31441</code> hits.</p>
+        <p>There are <code><?php echo $proj_cnt; ?></code> sites being tracked, with a total of <code><?php echo $hit_cnt; ?></code> hits.</p>
 
         <table class="table">
             <thead>
@@ -47,7 +49,7 @@ require_once 'includes/admin_header.inc';
                     echo '<tr>' .
                          '<td>' . $s['site_id'] . '</td>' .
                          '<td><a href="hits.php?id=' . $s['site_id'] . '">' . $s['site_name'] . '</a></td>' .
-                         '<td>' . $s['today'] . '</td>' .
+                         '<td>' . getHitsToday($s['site_id']) . '</td>' .
                          '<td>' . $s['count'] . '</td>' .
                          '<td><a href="edit.php?site_id=' . $s['site_id'] . '">Edit</a></td>' .
                          '</tr>' . "\n";

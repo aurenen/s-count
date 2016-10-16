@@ -305,9 +305,7 @@ function addSite($name, $url, $count) {
  */
 function getSitesDash() {
     $db = db_connect();
-    $query = "SELECT p.`site_id`, p.`site_name`, COUNT(h.`hit_id`) AS `today`, p.`count` 
-        FROM `" . DB_PREFIX . "projects` AS p JOIN `" . DB_PREFIX . "hits` AS h ON h.`site_id` = p.`site_id`
-        WHERE DATE(h.`time`) = CURDATE();";
+    $query = "SELECT `site_id`, `site_name`, `count` FROM `" . DB_PREFIX . "projects`;";
     $stmt = $db->prepare($query);
     try {
         $stmt->execute();
@@ -320,6 +318,24 @@ function getSitesDash() {
     
     $db = null;
     return $result;
+}
+
+function getHitsToday($id) {
+    $db = db_connect();
+    $query = "SELECT COUNT(*) AS `today` FROM `" . DB_PREFIX . "hits` 
+            WHERE DATE(`time`) = CURDATE() AND `site_id` = :id";
+    $stmt = $db->prepare($query);
+    try {
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $db = null;
+        return $result['today'];
+    }
+    catch (Exception $ex) {
+        echo 'ERROR: failed to get referrer stats. ' . $ex->getMessage();
+        $db = null;
+    }
 }
 
 /**
@@ -459,4 +475,42 @@ function getReferrerStats($id) {
     
     $db = null;
     return $result;
+}
+
+/**
+ * Count the total number of projects
+ * @return int : number of project sites
+ */
+function getProjectCount() {
+    $db = db_connect();
+    $stmt = $db->prepare("SELECT count(*) AS `total` FROM `" . DB_PREFIX . "projects`;");
+    try {
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $db = null;
+        return $result['total'];
+    }
+    catch (Exception $ex) {
+        echo 'ERROR: failed to get referrer stats. ' . $ex->getMessage();
+        $db = null;
+    }
+}
+
+/**
+ * Count the total number of hits
+ * @return int : number hits across all sites
+ */
+function getHitCount() {
+    $db = db_connect();
+    $stmt = $db->prepare("SELECT count(*) AS `total` FROM `" . DB_PREFIX . "hits`;");
+    try {
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $db = null;
+        return $result['total'];
+    }
+    catch (Exception $ex) {
+        echo 'ERROR: failed to get referrer stats. ' . $ex->getMessage();
+        $db = null;
+    }
 }
