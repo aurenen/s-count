@@ -18,7 +18,7 @@
 function db_connect() {
     require_once 'config.php';
 
-    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME;
+    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8';
 
     try {
         $link = new PDO($dsn, DB_USER, DB_PASS);

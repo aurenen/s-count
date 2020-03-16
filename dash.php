@@ -51,7 +51,7 @@ require_once 'includes/admin_header.inc';
                          '<td><a href="hits.php?id=' . $s['site_id'] . '">' . $s['site_name'] . '</a></td>' .
                          '<td>' . getHitsToday($s['site_id']) . '</td>' .
                          '<td>' . $s['count'] . '</td>' .
-                         '<td><a href="edit.php?site_id=' . $s['site_id'] . '">Edit</a></td>' .
+                         '<td><a href="edit.php?id=' . $s['site_id'] . '">Edit</a></td>' .
                          '</tr>' . "\n";
                 } ?>
             </tbody>
